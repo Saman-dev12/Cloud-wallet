@@ -13,33 +13,42 @@ const Wallet: React.FC = () => {
 const [balance, setBalance] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('send');
   const [userDetails,setUserdetails] = useRecoilState(user);
+
   
 
+const getBalance = async () => {
+    try {
+      const balance = await connection.getBalance(new PublicKey(userDetails.publicKey));
+      setBalance(balance);
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
+
+  const fetchBalance = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/user/profile', {
+        method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              
+          },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+          console.error('Failed to fetch user profile');
+          return;
+          }
+      const userDetails = await response.json();
+      setUserdetails(userDetails);
+        await getBalance()
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/user/profile', {
-          method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                
-            },
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-            console.error('Failed to fetch user profile');
-            return;
-            }
-        const userDetails = await response.json();
-        setUserdetails(userDetails);
-        const balance = await connection.getBalance(new PublicKey(userDetails.publicKey));
-        setBalance(balance);
-      } catch (error) {
-        console.error('Error fetching balance:', error);
-      }
-    };
-
     fetchBalance();
   }, []);
 
@@ -94,7 +103,7 @@ const [balance, setBalance] = useState<number | null>(null);
       {/* Action Content */}
       <div className="mb-8">
         {activeTab === 'send' && (
-          <SendSol />
+          <SendSol refreshBalance={getBalance} />
         )}
         {activeTab === 'deposit' && (
           <Deposit userDetails={userDetails}/>

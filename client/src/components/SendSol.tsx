@@ -3,7 +3,7 @@ import React from 'react'
 import { useRecoilValue } from 'recoil';
 import { user } from '../atom/useratom';
 
-const SendSol = () => {
+const SendSol: React.FC<{ refreshBalance: () => void }> = ({ refreshBalance }) => {
     const [amount, setAmount] = React.useState<number>(0);
     const [recipient, setRecipient] = React.useState('');
     const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
@@ -38,56 +38,59 @@ const SendSol = () => {
                 console.error('Failed to send transaction');
                 return;
             }
-
+            
             const data = await response.json();
             setSignature(data.signature);
+            await refreshBalance();
+
 
         console.log('Transaction submitted:', { amount, recipient });
       };
   return (
-    <div>
+    <div className="">
+      <h2 className="text-2xl font-bold mb-4 text-center">Send SOL</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Amount (SOL)
-                    </label>
-                    <input
-                      type="number"
-                      value={amount}
-                      step="0.01"
-                      min={0}
-                      onChange={(e) => setAmount(Number(e.target.value))}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Recipient Address
-                    </label>
-                    <input
-                      type="text"
-                      value={recipient}
-                      onChange={(e) => setRecipient(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter Solana address"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    Send SOL
-                  </button>
-                </form>
-                {signature && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-1">
-                      Transaction Signature:
-                    </p>
-                    <p className="text-sm text-gray-500">{signature}</p>
-                  </div>
-                )}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+        Amount (SOL)
+        </label>
+        <input
+        type="number"
+        value={amount}
+
+        
+        onChange={(e) => setAmount(Number(e.target.value))}
+        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="0.00"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+        Recipient Address
+        </label>
+        <input
+        type="text"
+        value={recipient}
+        onChange={(e) => setRecipient(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Enter Solana address"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+      >
+        Send SOL
+      </button>
+      </form>
+      {signature && (
+      <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+        <p className="text-sm font-medium text-gray-700 mb-1">
+        Transaction Signature:
+        </p>
+        <p className="text-sm text-gray-500 break-all">{signature}</p>
+      </div>
+      )}
     </div>
   )
 }
