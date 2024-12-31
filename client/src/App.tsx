@@ -5,7 +5,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Wallet from './components/Wallet';
-import ProtectedRoute from './components/ProtectedRoute'; // Adjust the import path as needed
+import ProtectedRoute, { ProtectedRoute2 } from './components/ProtectedRoute'; // Adjust the import path as needed
 
 const App: React.FC = () => {
   return (
@@ -14,8 +14,14 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={
+            <ProtectedRoute2>
+            <Login />
+            </ProtectedRoute2>
+            } />
+          <Route path="/signup" element={<ProtectedRoute2>
+            <Signup />
+            </ProtectedRoute2>} />
           <Route
             path="/wallet"
             element={

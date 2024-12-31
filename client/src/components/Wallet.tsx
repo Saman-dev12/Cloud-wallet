@@ -1,29 +1,30 @@
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import React, { useEffect, useState } from 'react';
-import {  ArrowDownLeft, Repeat,  Clock, Send } from 'react-feather';
+import {  ArrowDownLeft, Repeat,  Clock, Send, DownloadCloud } from 'react-feather';
 import { useRecoilState } from 'recoil';
 import { user } from '../atom/useratom';
 import SendSol from './SendSol';
 import Deposit from './Deposit';
 import Swap from './Swap';
 import Transactions from './Transactions';
+import Airdrop from './Airdrop';
 
 const Wallet: React.FC = () => {
     const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
 const [balance, setBalance] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('send');
-  const [userDetails,setUserdetails] = useRecoilState(user);
+  const [userInfo,setUserInfo] = useRecoilState(user);
 
-  
-
-const getBalance = async () => {
+  const getBalance = async () => {
     try {
-      const balance = await connection.getBalance(new PublicKey(userDetails.publicKey));
+      const publicKey = new PublicKey(userInfo.publicKey);
+      const balance = await connection.getBalance(publicKey);
       setBalance(balance);
     } catch (error) {
       console.error('Error fetching balance:', error);
     }
   };
+
 
   const fetchBalance = async () => {
     try {
@@ -41,8 +42,10 @@ const getBalance = async () => {
           return;
           }
       const userDetails = await response.json();
-      setUserdetails(userDetails);
-        await getBalance()
+      setUserInfo(userDetails);
+        const publicKey = new PublicKey(userDetails.publicKey);
+        const balance = await connection.getBalance(publicKey);
+        setBalance(balance);
     } catch (error) {
       console.error('Error fetching balance:', error);
     }
@@ -97,6 +100,17 @@ const getBalance = async () => {
           <Repeat className="w-4 h-4 mr-2" />
           Swap
         </button>
+        <button
+          onClick={() => setActiveTab('Airdrop')}
+          className={`flex items-center px-4 py-2 ${
+            activeTab === 'Airdrop'
+              ? 'border-b-2 border-blue-500 text-blue-500'
+              : 'text-gray-500'
+          }`}
+        >
+          <DownloadCloud className="w-4 h-4 mr-2" />
+          Swap
+        </button>
         
       </div>
 
@@ -106,10 +120,13 @@ const getBalance = async () => {
           <SendSol refreshBalance={getBalance} />
         )}
         {activeTab === 'deposit' && (
-          <Deposit userDetails={userDetails}/>
+          <Deposit userDetails={userInfo}/>
         )}
         {activeTab === 'swap' && (
           <Swap/>
+        )}
+        {activeTab === 'Airdrop' && (
+          <Airdrop refreshBalance={getBalance}/>
         )}
    
       </div>
@@ -120,7 +137,7 @@ const getBalance = async () => {
           <Clock className="w-4 h-4 mr-2 text-gray-500" />
           <h2 className="text-lg font-medium">Recent Activity</h2>
         </div>
-        <Transactions/>
+        {userInfo && <Transactions userInfo={userInfo} />}
       </div>
     </div>
   );

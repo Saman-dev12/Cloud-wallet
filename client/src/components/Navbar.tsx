@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { auth } from '../atom/useratom';
+import { auth} from '../atom/useratom';
 
 const Navbar: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useRecoilState(auth);
   const navigate = useNavigate();
-
   const logout = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/user/logout', {
@@ -18,6 +17,7 @@ const Navbar: React.FC = () => {
         // Clear the authentication state and token
         localStorage.removeItem('token');
         setIsAuthenticated(false);
+        
         navigate('/');
       } else {
         console.log('Logout failed:', response.statusText);
@@ -56,6 +56,7 @@ const Navbar: React.FC = () => {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
+              
               {isAuthenticated ? (
                 <button
                   onClick={logout}

@@ -8,9 +8,7 @@ import authMiddleware from "../middleware/middleware";
 const router = Router()
 router.post('/sign', authMiddleware,async(req, res) => {
     const {tx} = req.body;
-    console.log(tx);
     const deserialize = Transaction.from(tx.data);
-    console.log(deserialize);
 
     const user = req.user;
     const userid = user.id;
