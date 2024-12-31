@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
 
         res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ message: 'Login successful.' });
+        res.status(200).json({ message: 'Login successful.', token });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'An unexpected error occurred.' });

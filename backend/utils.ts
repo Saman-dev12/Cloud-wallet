@@ -1,7 +1,9 @@
+import { Connection } from '@solana/web3.js';
 import CryptoJS from 'crypto-js';
 
-const secretKey = 'your-secret-key';
+const secretKey = process.env.ENCRYPTION_SECRET as string;
 
+export const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
 export function encryptPrivateKey(privateKey: string): string {
     return CryptoJS.AES.encrypt(privateKey, secretKey).toString();
 }
