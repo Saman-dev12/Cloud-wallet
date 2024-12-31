@@ -5,6 +5,7 @@ import bs58 from "bs58";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/middleware";
+import { decryptPrivateKey, encryptPrivateKey } from "../utils";
 
 const router = Router();
 
@@ -32,11 +33,12 @@ router.post('/signup', async (req, res) => {
         const keypair = Keypair.generate();
         const publicKey = keypair.publicKey.toString();
         const privateKey = bs58.encode(keypair.secretKey);
+        const encryptedPrivateKey = encryptPrivateKey(privateKey);
 
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);
 
-        const newUser = new User({ email, password: hashedPassword, publicKey, privateKey });
+        const newUser = new User({ email, password: hashedPassword, publicKey, privateKey:encryptedPrivateKey });
         await newUser.save();
 
         res.status(201).json({ message: 'User created successfully.' });
@@ -95,9 +97,9 @@ router.get('/profile', authMiddleware ,async (req, res) => {
         if (!userRec) {
             res.status(404).json({ error: 'User not found.' });
             return;
-        }
-        ;
-        res.status(200).json({ email: userRec.email, publicKey: userRec.publicKey, privateKey:userRec.privateKey });
+        };
+        const decryptedPrivateKey = decryptPrivateKey(userRec.privateKey);
+        res.status(200).json({ email: userRec.email, publicKey: userRec.publicKey, privateKey:decryptedPrivateKey });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'An unexpected error occurred.' });
