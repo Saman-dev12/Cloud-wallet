@@ -98,8 +98,24 @@ router.get('/profile', authMiddleware ,async (req, res) => {
             res.status(404).json({ error: 'User not found.' });
             return;
         };
+        res.status(200).json({ email: userRec.email, publicKey: userRec.publicKey });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'An unexpected error occurred.' });
+    }
+})
+
+router.get('/privatekey', authMiddleware, async (req, res) => {
+    try {
+        const user = req.user;
+        const userId = user.id;
+        const userRec = await User.findById(userId);
+        if (!userRec) {
+            res.status(404).json({ error: 'User not found.' });
+            return;
+        };
         const decryptedPrivateKey = decryptPrivateKey(userRec.privateKey);
-        res.status(200).json({ email: userRec.email, publicKey: userRec.publicKey, privateKey:decryptedPrivateKey });
+        res.status(200).json({ privateKey: decryptedPrivateKey });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'An unexpected error occurred.' });
