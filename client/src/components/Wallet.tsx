@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import React, { useEffect, useState } from 'react';
 import {  ArrowDownLeft, Repeat,  Clock, Send } from 'react-feather';
 import { useRecoilState } from 'recoil';
@@ -50,7 +50,7 @@ const [balance, setBalance] = useState<number | null>(null);
       {/* Balance Section */}
       <div className="text-center mb-8 p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg text-white">
         <p className="text-sm mb-2">Total Balance</p>
-        <h1 className="text-4xl font-bold">{balance} sol</h1>
+        <h1 className="text-4xl font-bold">{balance ? (balance/LAMPORTS_PER_SOL): 0} sol</h1>
       </div>
 
       {/* Action Tabs */}
