@@ -22,7 +22,7 @@ const Airdrop = ({ refreshBalance }: { refreshBalance: () => void }) => {
     };
 
     return (
-        <div className='flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-500 to-purple-600'>
+        <div className='flex flex-col items-center justify-center h-[30rem] bg-gradient-to-r from-blue-500 to-purple-600'>
             <h1 className='text-5xl font-bold text-white mb-8'>Airdrop</h1>
             <div className='bg-white p-8 rounded-lg shadow-lg w-96'>
                 <input 

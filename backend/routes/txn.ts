@@ -6,6 +6,8 @@ import bs58 from "bs58";
 import authMiddleware from "../middleware/middleware";
 
 const router = Router()
+
+
 router.post('/sign', authMiddleware,async(req, res) => {
     const {tx} = req.body;
     const deserialize = Transaction.from(tx.data);
@@ -31,5 +33,8 @@ router.post('/sign', authMiddleware,async(req, res) => {
 
 
 });
+
+// router.post('/swap', authMiddleware,async(req, res) => {})
+    
 
 export default router;
